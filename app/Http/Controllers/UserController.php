@@ -41,35 +41,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        // $request->validate([
-        //     'name' => ['required', 'string', 'max:255'],
-        //     'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-        //     'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        // ]);
-
-        // $user = User::create([
-        //     'name' => $request->name,
-        //     'email' => $request->email,
-        //     'password' => Hash::make($request->password),
-        // ]);
-
-        // event(new Registered($user));
-
-        // Auth::login($user);
-        // $user=new User();
-        // $user->phone=$request->phone;
-        // if($request->hasFile('image')){
-        //     $compliteFileName = $request->file('image')->getClientOriginalName();
-        //     // $filaNameOnly = pathinfo($compliteFileName , PATHINFO_FILENAME);
-        //     $extension = $request->file('image')->getClientOriginalExtension();
-        //     $comPic = str_replace(' ' , '' , $compliteFileName).'-'.rand() . ''.time(). '.'.$extension;
-        //     $path = $request->file('image')->storeAs('public/images' , $comPic);
-        //     $user->image=$request->$comPic;
-        // }
-        // $user->save();
-        // redirect to route and return response
-
+    
         
     }
 
@@ -99,8 +71,7 @@ class UserController extends Controller
      */
     public function edit(Request $request)
     {
-        //
-        dd(Auth::user());
+
     }
 
     /**
@@ -116,23 +87,33 @@ class UserController extends Controller
         if(Auth::user()){
             $id = Auth::user()->id;
             $user= User::find($id);
-            if($request->hasFile('image')){
-                $compliteFileName = $request->file('image')->getClientOriginalName();
-                $filaNameOnly = pathinfo($compliteFileName , PATHINFO_FILENAME);
-                $extension = $request->file('image')->getClientOriginalExtension();
-                $comPic = str_replace(' ' , '' , $filaNameOnly).'-'.rand() . ''.time(). '.'.$extension;
-                $path = $request->file('image')->storeAs('public/images' , $comPic);
-                $user->image=$comPic;
+
+            if(!$request->image){
+                return 'image is required';
+            }else{
+                $user->image=$request->image;
             }
-            $user->name = $request->name;
+            if($request->input('name') == false){
+                $user->name =  Auth::user()->name;
+            }else{
+                $user->name = $request->name;
+            }
             if($request->input('email') == false){
                 $user->email =  Auth::user()->email;
             }else{
                 $user->email = $request->email;
             }
             $user->password = Hash::make($request->password);
-            $user->phone = $request->phone;
-            $user->job_title=$request->job_title;
+            if(!$request->phone){
+                $user->phone =  Auth::user()->phone;
+            }else{
+                $user->phone = $request->phone;
+            }
+            if(!$request->job_title){
+                return 'job_title is required';
+            }else{
+                $user->job_title=$request->job_title;
+            }
             $user->save();
             return $user;
         };

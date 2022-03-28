@@ -10,42 +10,21 @@ use App\Models\User;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AuthenticationController;
 
-Route::post('/sanctum/token', function (Request $request) {
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required',
-        'device_name' => 'required',
-    ]);
-    $user = User::where('email', $request->email)->first();
-    if (! $user || ! Hash::check($request->password, $user->password)) {
-        throw ValidationException::withMessages([
-            'email' => ['The provided credentials are incorrect.'],
-        ]);
-    }
-
-    return $user->createToken($request->device_name)->plainTextToken;
-});
-
-//register user
-// store
+//register user route
 Route::post('/register',[AuthenticationController::class, 'createAccount']);
 
-//login user
-// Route::get('/users',[UserController::class,'index']);
+//login user route
 Route::post('/login',[AuthenticationController::class,'signin']);
 
-//using middleware
+//using middleware 
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    
     Route::post('/logout', [AuthenticationController::class, 'signout']);
     Route::get('/profile', function(Request $request) {
         return auth()->user();
     });
-    // get by id
+    // get user info by id
     Route::get('/users',[UserController::class,'show']);
-    // update
+    // update user info
     Route::post('/users',[UserController::class,'update']);
-});
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
 });

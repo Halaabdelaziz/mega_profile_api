@@ -16,7 +16,7 @@ class AuthenticationController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
-            'phone' => 'required|min:11|string',
+            'phone' => 'required|min:11|max:13|string',
         ]);
 
 
@@ -28,7 +28,6 @@ class AuthenticationController extends Controller
             'job_title' => $request->job_title,
             'image' => $request->image
         ]);
-        // dd($user);
         $token = $user->createToken('myToken')->plainTextToken;
         $response = [
             'user' => $user,
