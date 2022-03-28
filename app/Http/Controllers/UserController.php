@@ -20,7 +20,7 @@ class UserController extends Controller
     public function index()
     {
         //
-        return User::all();
+      
     }
 
     /**
@@ -53,7 +53,8 @@ class UserController extends Controller
      */
     public function show()
     {
-        //
+        //check user login
+        // get user data 
         if(Auth::user()){
             $id = Auth::user()->id;
             $user= User::find($id);
@@ -87,17 +88,19 @@ class UserController extends Controller
         if(Auth::user()){
             $id = Auth::user()->id;
             $user= User::find($id);
-
+            // enforce user to add image
             if(!$request->image){
                 return 'image is required';
             }else{
                 $user->image=$request->image;
             }
+            // update user name if exist
             if($request->input('name') == false){
                 $user->name =  Auth::user()->name;
             }else{
                 $user->name = $request->name;
             }
+
             if($request->input('email') == false){
                 $user->email =  Auth::user()->email;
             }else{

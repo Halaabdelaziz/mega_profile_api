@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthenticationController extends Controller
 {
-    //
+    //this method to register and create user in database
     public function createAccount(Request $request)
     {
         $attr = $request->validate([
@@ -47,7 +47,6 @@ class AuthenticationController extends Controller
         if (!Auth::attempt($attr)) {
             return $this->error('Credentials not match', 401);
         }
-        // $token = $user->createToken('myToken')->plainTextToken;
         $response = [
             'user' => Auth::user(),
             'token' => auth()->user()->createToken('API_Token')->plainTextToken
