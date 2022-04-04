@@ -59,6 +59,7 @@ class UserController extends Controller
             $id = Auth::user()->id;
             $user= User::find($id);
             return $user;
+            
         }else{
             return "not authorized";
         }
@@ -106,7 +107,7 @@ class UserController extends Controller
             }else{
                 $user->email = $request->email;
             }
-            $user->password = Hash::make($request->password);
+            $user->password = Auth::user()->password;
             if(!$request->phone){
                 $user->phone =  Auth::user()->phone;
             }else{

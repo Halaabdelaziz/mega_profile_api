@@ -28,6 +28,7 @@ class AuthenticationController extends Controller
             'job_title' => $request->job_title,
             'image' => $request->image
         ]);
+
         $token = $user->createToken('myToken')->plainTextToken;
         $response = [
             'user' => $user,
@@ -40,21 +41,29 @@ class AuthenticationController extends Controller
     public function signin(Request $request)
     {
         $attr = $request->validate([
-            'email' => 'required|string|email|',
+            'email' => 'required|string|email',
             'password' => 'required|string|min:6'
         ]);
 
-        if (!Auth::attempt($attr)) {
-            return $this->error('Credentials not match', 401);
+        $user = User::where('email', $attr['email'])->first();
+      
+        if(!$user || !Hash::check($attr['password'], $user->password) ) {
+            dd($user);
+            return response ([
+                "Message" => "FALSE PASSWORD",
+            ],  401);
         }
+        $token = $user->createToken('myAppToken')->plainTextToken;
+
         $response = [
-            'user' => Auth::user(),
-            'token' => auth()->user()->createToken('API_Token')->plainTextToken
+            'user' => $user,
+            'token' => $token
         ]; 
 
         return response($response, 201);
     }
 
+    
     // this method signs out users by removing tokens
     public function signout()
     {
