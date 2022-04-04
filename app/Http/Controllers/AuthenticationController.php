@@ -48,9 +48,8 @@ class AuthenticationController extends Controller
         $user = User::where('email', $attr['email'])->first();
       
         if(!$user || !Hash::check($attr['password'], $user->password) ) {
-            dd($user);
             return response ([
-                "Message" => "FALSE PASSWORD",
+                "Message" => "FALSE credentials",
             ],  401);
         }
         $token = $user->createToken('myAppToken')->plainTextToken;
